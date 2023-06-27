@@ -153,11 +153,11 @@ function updateExistingMechanicWorkplace(user, mechanicWorkplace) {
   });
 }
 
-function updateExistingMechaniRating (user, mechanicID, mechanicRating) {
+function updateExistingMechaniRating (user, mechanicID, mechanicRanking) {
   return instance.put('/api/v1/mechanic/rate-mechanic', {
     params: {
       mechanicID: mechanicID,
-      mechanicRanking: mechanicRating
+      mechanicRanking: String(mechanicRanking)
     },
     headers: { 'Authorization': bearerAuth(user) }
   })

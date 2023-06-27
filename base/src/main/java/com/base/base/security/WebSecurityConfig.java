@@ -43,8 +43,8 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/v1/menu", "/api/v1/menu/**").hasAuthority(ADMIN)
 
                         .requestMatchers("/api/v1/mechanic", "/api/v1/mechanic/get-mechanics").hasAnyAuthority(ADMIN, USER)
-
                         .requestMatchers("/api/v1/mechanic", "api/v1/mechanic/rate-mechanic").hasAnyAuthority(ADMIN, USER)
+
                         .requestMatchers("/api/v1/mechanic", "/api/v1/mechanic/**").hasAuthority(ADMIN)
                         .requestMatchers("/api/v1/workplace", "/api/v1/workplace/**").hasAuthority(ADMIN)
 

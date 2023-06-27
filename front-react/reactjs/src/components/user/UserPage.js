@@ -56,7 +56,7 @@ class UserPage extends Component {
     const Auth = this.context
     const user = Auth.getUser()
 
-    console.log(this.state.currentMechanicRating)
+    console.log(mechanicID)
   
     this.setState({ isMechanicsLoading: true })
     orderApi.updateExistingMechaniRating(user, mechanicID, this.state.currentMechanicRating)

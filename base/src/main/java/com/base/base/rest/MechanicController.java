@@ -57,7 +57,6 @@ public class MechanicController {
     @Operation(security = {@SecurityRequirement(name = BEARER_KEY_SECURITY_SCHEME)})
     @PutMapping("/rate-mechanic")
     public void rateMechanic (@RequestParam Long mechanicID, @RequestParam String mechanicRanking) {
-        System.out.println("asd");
         mechanicService.rateMechanic(mechanicID, mechanicRanking);
     }
 }
