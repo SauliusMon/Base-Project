@@ -42,6 +42,12 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/v1/meal", "/api/v1/meal/**").hasAuthority(ADMIN)
                         .requestMatchers("/api/v1/menu", "/api/v1/menu/**").hasAuthority(ADMIN)
 
+                        .requestMatchers("/api/v1/mechanic", "/api/v1/mechanic/get-mechanics").hasAnyAuthority(ADMIN, USER)
+
+                        .requestMatchers("/api/v1/mechanic", "api/v1/mechanic/rate-mechanic").hasAnyAuthority(ADMIN, USER)
+                        .requestMatchers("/api/v1/mechanic", "/api/v1/mechanic/**").hasAuthority(ADMIN)
+                        .requestMatchers("/api/v1/workplace", "/api/v1/workplace/**").hasAuthority(ADMIN)
+
                         .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
                         .requestMatchers("/api/v1/users", "/api/v1/users/**").hasAuthority(ADMIN)
                         .requestMatchers("/public/**", "/auth/**").permitAll()

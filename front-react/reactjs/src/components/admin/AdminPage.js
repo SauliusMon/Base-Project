@@ -11,13 +11,40 @@ class AdminPage extends Component {
 
   state = {
     users: [],
-    orders: [],
+    mechanics: [],
+    mechanicWorkplaces: [],
   
     userUsernameSearch: '',
-   
+
+    newMechanicName: '',
+    newMechanicSecondName: '',
+    newMechanicSpecialization: '',
+    newMechanicTown: '',
+    newMechanicCurrentWorkplace: {},
+
+    currentMechanic: {},
+
+    updateMechanicName: '',
+    updateMechanicSecondName: '',
+    updateMechanicSpecialization: '',
+    updateMechanicTown: '',
+
+    newMechanicWorkplaceName: '',
+    newMechanicWorkplaceAddress: '',
+    newMechanicWorkplaceBoss: '',
+
+
+    currentMechanicWorkplace: {},
+
+    updateMechanicWorkplaceName: '',
+    updateMechanicWorkplaceAddress: '',
+    updateMechanicWorkplaceBoss: '',
+
+    
     isAdmin: true,
     isUsersLoading: false,
-    isOrdersLoading: false,
+    isMechanicsLoading: false,
+    isMechanicsWorkplacesLoading: false
   }
 
   componentDidMount() {
@@ -27,11 +54,60 @@ class AdminPage extends Component {
     this.setState({ isAdmin })
 
     this.handleGetUsers()
-    this.handleGetOrders()
+    this.handleGetMechanics()
+    this.handleGetMechanicsWorkplaces()
   }
 
   handleInputChange = (e, {name, value}) => {
     this.setState({ [name]: value })
+  }
+
+  handleSelectedMechanicWorkChange = (e, { value }) => {
+    const Auth = this.context
+    const user = Auth.getUser()
+
+    orderApi.getMechanicWorkplaceByID(user, value)
+      .then(response => {
+        this.setState({ newMechanicCurrentWorkplace: response.data })
+      })
+      .catch(error => {
+        handleLogError(error)
+      })
+  }
+
+  handleSelectedMechanicChange = (e, { value }) => {
+    const Auth = this.context
+    const user = Auth.getUser()
+
+    orderApi.getMechanicByID(user, value)
+      .then(response => {
+        this.setState({ currentMechanic: response.data })
+
+        this.setState({ updateMechanicName: response.data.name })
+        this.setState({ updateMechanicSecondName: response.data.secondName })
+        this.setState({ updateMechanicSpecialization: response.data.specialization })
+        this.setState({ updateMechanicTown: response.data.town })
+      })
+      .catch(error => {
+        handleLogError(error)
+      })
+  }
+
+  handleSelectedMechanicWChange = (e, { value }) => {
+    const Auth = this.context
+    const user = Auth.getUser()
+
+    orderApi.getMechanicWorkplaceByID(user, value)
+      .then(response => {
+        this.setState({ currentMechanicWorkplace: response.data })
+
+        this.setState({ updateMechanicWorkplaceName: response.data.name })
+        this.setState({ updateMechanicWorkplaceAddress: response.data.address })
+        this.setState({ updateMechanicWorkplaceBoss: response.data.boss })
+      })
+      .catch(error => {
+        handleLogError(error)
+      })
   }
 
 
@@ -84,62 +160,169 @@ class AdminPage extends Component {
   }
 
 
-  handleGetOrders = () => {
+  handleGetMechanics = () => {
     const Auth = this.context
     const user = Auth.getUser()
 
-    this.setState({ isOrdersLoading: true })
-    orderApi.getOrders(user)
+    this.setState({ isMechanicsLoading: true })
+    orderApi.getMechanics(user)
       .then(response => {
-        this.setState({ orders: response.data })
+        this.setState({ mechanics: response.data })
       })
       .catch(error => {
         handleLogError(error)
       })
       .finally(() => {
-        this.setState({ isOrdersLoading: false })
+        this.setState({ isMechanicsLoading: false })
       })
   }
 
-  handleDeleteOrder = (orderID) => {
+handleDeleteMechanic = (mechanicID) => {
+  const Auth = this.context
+  const user = Auth.getUser()
+
+  this.setState({ isMechanicsLoading: true })
+  orderApi.deleteMechanic(user, mechanicID)
+    .catch(error => {
+      handleLogError(error)
+    })
+    .finally(() => {
+      this.handleGetMechanics()
+      this.setState({ isMechanicsLoading: false })
+    })
+}
+
+handleCreateMechanic = () => {
+  const Auth = this.context
+  const user = Auth.getUser()
+
+  const mechanicDtoToCreate = { 
+    name: this.state.newMechanicName,
+    secondName: this.state.newMechanicSecondName,
+    specialization: this.state.newMechanicSpecialization,
+    town: this.state.newMechanicTown,
+    workplace: this.state.newMechanicCurrentWorkplace.id
+  } 
+
+  this.setState({ isMechanicsLoading: true })
+  orderApi.createNewMechanic(user, mechanicDtoToCreate)
+    .catch(error => {
+      handleLogError(error)
+    })
+    .finally(() => {
+      this.handleGetMechanics()
+      this.setState({ isMechanicsLoading: false })
+    })
+  }
+
+handleUpdateMechanic = () => {
+  const Auth = this.context
+  const user = Auth.getUser()
+
+  const mechanicDtoToUpdate = { 
+    id: this.state.currentMechanic.id,
+    name: this.state.updateMechanicName,
+    secondName: this.state.updateMechanicSecondName,
+    specialization: this.state.updateMechanicSpecialization,
+    town: this.state.updateMechanicTown
+  } 
+
+  this.setState({ isMechanicsLoading: true })
+  orderApi.updateExistingMechanic(user, mechanicDtoToUpdate)
+    .catch(error => {
+      handleLogError(error)
+    })
+    .finally(() => {
+      this.handleGetMechanics()
+      this.setState({ isMechanicsLoading: false })
+    })
+  }
+      
+  handleGetMechanicsWorkplaces = () => {
     const Auth = this.context
     const user = Auth.getUser()
 
-    this.setState({ isOrdersLoading: true })
-    orderApi.deleteOrder(user, orderID)
+    this.setState({ isMechanicsWorkplacesLoading: true })
+    orderApi.getMechanicsWorkplaces(user)
+      .then(response => {
+        this.setState({ mechanicWorkplaces: response.data })
+      })
       .catch(error => {
         handleLogError(error)
       })
       .finally(() => {
-        this.handleGetOrders()
-        this.handleGetMeals()
-        this.handleGetMenus()
-        this.setState({ isOrdersLoading: false })
+        this.setState({ isMechanicsWorkplacesLoading: false })
       })
   }
 
-  handleAcceptOrder = (orderID) => {
+  handleDeleteMechanicWorkplace = (mechanicWorkplaceID) => {
+    const Auth = this.context
+    const user = Auth.getUser()
+  
+    this.setState({ isMechanicsLoading: true })
+    orderApi.deleteMechanicWorkplace(user, mechanicWorkplaceID)
+      .catch(error => {
+        handleLogError(error)
+      })
+      .finally(() => {
+        this.handleGetMechanicsWorkplaces()
+        this.setState({ isMechanicsLoading: false })
+      })
+  }
+
+  handleCreateMechanicWorkplace  = () => {
     const Auth = this.context
     const user = Auth.getUser()
 
-    this.setState({ isOrdersLoading: true })
-    orderApi.acceptOrder(user, orderID)
+    const mechanicWorkplaceDtoToCreate = { 
+      name: this.state.newMechanicWorkplaceName,
+      address: this.state.newMechanicWorkplaceAddress,
+      boss: this.state.newMechanicWorkplaceBoss,
+    } 
+  
+    this.setState({ isMechanicsWorkplacesLoading: true })
+    orderApi.createNewMechanicWorkplace(user, mechanicWorkplaceDtoToCreate)
       .catch(error => {
         handleLogError(error)
       })
       .finally(() => {
-        this.handleGetOrders()
-        this.setState({ isOrdersLoading: false })
+        this.handleGetMechanicsWorkplaces()
+        this.setState({ isMechanicsWorkplacesLoading: false })
       })
-  }
+    }
 
+  handleUpdateMechanicW  = () => {
+    const Auth = this.context
+    const user = Auth.getUser()
+  
+    const mechanicWDtoToUpdate = { 
+      id: this.state.currentMechanicWorkplace.id,
+      name: this.state.updateMechanicWorkplaceName,
+      address: this.state.updateMechanicWorkplaceAddress,
+      boss: this.state.updateMechanicWorkplaceBoss,
+    } 
+  
+    this.setState({ isMechanicsLoading: true })
+    orderApi.updateExistingMechanicWorkplace(user, mechanicWDtoToUpdate)
+      .catch(error => {
+        handleLogError(error)
+      })
+      .finally(() => {
+        this.handleGetMechanicsWorkplaces()
+        this.setState({ isMechanicsLoading: false })
+      })
+    }
 
   render() {
     if (!this.state.isAdmin) {
       return <Navigate to='/' />
     } else {
-      const { isUsersLoading, users, orders, userUsernameSearch, isOrdersLoading
-       
+      const { isUsersLoading, users, mechanics, newMechanicCurrentWorkplace, userUsernameSearch, isMechanicsLoading,
+       newMechanicName, newMechanicSecondName, newMechanicSpecialization, newMechanicTown,
+       mechanicWorkplaces, newMechanicWorkplaceName, newMechanicWorkplaceAddress, newMechanicWorkplaceBoss,
+       currentMechanic, updateMechanicName, updateMechanicSecondName, updateMechanicSpecialization, updateMechanicTown,
+       currentMechanicWorkplace, updateMechanicWorkplaceName, updateMechanicWorkplaceAddress, updateMechanicWorkplaceBoss
+      
       } = this.state
       return (
         <Container>
@@ -149,12 +332,45 @@ class AdminPage extends Component {
             userUsernameSearch={userUsernameSearch}
             handleDeleteUser={this.handleDeleteUser}
             handleSearchUser={this.handleSearchUser}
-            
-            isOrdersLoading={isOrdersLoading}
-            orders={orders}
-            handleDeleteOrder={this.handleDeleteOrder}
-            handleAcceptOrder={this.handleAcceptOrder}
             handleInputChange={this.handleInputChange}
+            
+            isMechanicsLoading={isMechanicsLoading}
+            mechanics={mechanics}
+            newMechanicCurrentWorkplace={newMechanicCurrentWorkplace}
+            handleSelectedMechanicWorkChange={this.handleSelectedMechanicWorkChange}
+            handleDeleteMechanic={this.handleDeleteMechanic}
+            handleCreateMechanic={this.handleCreateMechanic}
+            
+            newMechanicName={newMechanicName}
+            newMechanicSecondName={newMechanicSecondName}
+            newMechanicSpecialization={newMechanicSpecialization}
+            newMechanicTown={newMechanicTown}
+
+            currentMechanic={currentMechanic}
+            handleSelectedMechanicChange={this.handleSelectedMechanicChange}
+            handleUpdateMechanic={this.handleUpdateMechanic}
+
+            updateMechanicName={updateMechanicName}
+            updateMechanicSecondName={updateMechanicSecondName}
+            updateMechanicSpecialization={updateMechanicSpecialization}
+            updateMechanicTown={updateMechanicTown}
+
+            mechanicWorkplaces={mechanicWorkplaces}
+            handleDeleteMechanicWorkplace={this.handleDeleteMechanicWorkplace}
+            handleCreateMechanicWorkplace={this.handleCreateMechanicWorkplace}
+
+            newMechanicWorkplaceName={newMechanicWorkplaceName}
+            newMechanicWorkplaceAddress={newMechanicWorkplaceAddress}
+            newMechanicWorkplaceBoss={newMechanicWorkplaceBoss}
+
+            currentMechanicWorkplace={currentMechanicWorkplace}
+            handleSelectedMechanicWChange={this.handleSelectedMechanicWChange}
+            handleUpdateMechanicW={this.handleUpdateMechanicW}
+
+            updateMechanicWorkplaceName={updateMechanicWorkplaceName}
+            updateMechanicWorkplaceAddress={updateMechanicWorkplaceAddress}
+            updateMechanicWorkplaceBoss={updateMechanicWorkplaceBoss}
+
           />
         </Container>
       )

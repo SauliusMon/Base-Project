@@ -9,25 +9,22 @@ export const orderApi = {
   getUsersFilteredByUsername,
   deleteUser,
 
-  getAllMenus,
-  getMenusFilteredByName,
-  deleteMenu,
-  createMenu,
-  getMenuByID,
-  addMealToMenu,
-  removeMealFromMenu,
+  getMechanics,
+  deleteMechanic,
+  createNewMechanic,
+  acceptOrder,
 
-  getAllMeals,
-  getMealCategories,
-  getMealsFilteredByName,
-  deleteMeal,
-  createMeal,
+  getMechanicByID,
+  updateExistingMechanic,
 
-  createNewOrder,
-  getMyOrders,
-  getOrders,
-  deleteOrder,
-  acceptOrder
+  getMechanicsWorkplaces,
+  deleteMechanicWorkplace,
+  createNewMechanicWorkplace,
+
+  getMechanicWorkplaceByID,
+  updateExistingMechanicWorkplace,
+
+  updateExistingMechaniRating
 }
 
 function authenticate(username, password) {
@@ -66,131 +63,24 @@ function deleteUser(user, username) {
 }
 
 
-function getAllMenus(user) {
-  return instance.get('/api/v1/menu/get-menus', {
-    headers: { 'Authorization': bearerAuth(user) }
-  })
-}
-
-function getMenuByID(user, menuID) {
-  return instance.get(`/api/v1/menu/get-menu/${menuID}`, {
-    headers: { 'Authorization': bearerAuth(user) }
-  })
-}
-
-function getMenusFilteredByName(user, menuTitle) {
-  if (menuTitle === '' || menuTitle.trim().length === 0) {
-    return getAllMenus(user);
-  }
-  return instance.get(`/api/v1/menu/get-menus-filtered/${menuTitle}`, {
-    headers: { 'Authorization': bearerAuth(user) }
-  })
-}
-
-function createMenu(user, menuToCreate) {
-  return instance.post('/api/v1/menu/create-menu', menuToCreate, {
-    headers: { 'Authorization': bearerAuth(user) }
-  })
-}
-
-function deleteMenu(user, menuID) {
-  return instance.delete(`/api/v1/menu/delete-menu/${menuID}`, {
-    headers: { 'Authorization': bearerAuth(user) }
-  })
-}
-
-function addMealToMenu(user, menuID, mealID) {
-  return instance.post('/api/v1/menu/add-meal-to-menu', null, {
-    params: {
-      menuID: menuID,
-      mealID: mealID,
-    },
+function createNewMechanic(user, mechanic) {
+  return instance.post('/api/v1/mechanic/create-mechanic', mechanic, {
     headers: {
       Authorization: bearerAuth(user),
     },
   });
 }
 
-function removeMealFromMenu(user, menuID, mealID) {
-  return instance.delete('/api/v1/menu/remove-meal-from-menu', {
+function getMechanics(user) {
+  return instance.get(`/api/v1/mechanic/get-mechanics`, {
+    headers: { 'Authorization': bearerAuth(user) }
+  })
+}
+
+function deleteMechanic(user, mechanicID) {
+  return instance.delete(`/api/v1/mechanic/delete-mechanic`, {
     params: {
-      menuID: menuID,
-      mealID: mealID,
-    },
-    headers: {
-      Authorization: bearerAuth(user),
-    },
-  });
-}
-
-
-function getAllMeals(user) {
-  return instance.get('/api/v1/meal/get-meals', {
-    headers: { 'Authorization': bearerAuth(user) }
-  })
-}
-
-function getMealCategories(user) {
-  return instance.get('/api/v1/meal/get-meal-categories', {
-    headers: { 'Authorization': bearerAuth(user) }
-  })
-}
-
-function getMealsFilteredByName(user, mealName) {
-  if (mealName === '' || mealName.trim().length === 0) {
-    return getAllMeals(user);
-  }
-  return instance.get(`/api/v1/meal/get-meals-filtered/${mealName}`, {
-    headers: { 'Authorization': bearerAuth(user) }
-  })
-}
-
-function createMeal(user, mealToCreate) {
-  return instance.post('/api/v1/meal/create-meal', mealToCreate, {
-    headers: { 'Authorization': bearerAuth(user) }
-  })
-}
-
-function deleteMeal(user, mealID) {
-  return instance.delete(`/api/v1/meal/delete-meal/${mealID}`, {
-    headers: { 'Authorization': bearerAuth(user) }
-  })
-}
-
-
-function createNewOrder(user, menuID, order) {
-  return instance.post('/api/v1/order/create-order', order, {
-    params: {
-      menuID: menuID,
-      email: user.data.email,
-    },
-    headers: {
-      Authorization: bearerAuth(user),
-    },
-  });
-}
-
-function getMyOrders (user) {
-  return instance.get('/api/v1/order/get-my-orders', {
-    params: {
-      email: user.data.email
-    },
-    headers: {
-      Authorization: bearerAuth(user),
-    },
-  });
-}
-
-function getOrders(user) {
-  return instance.get(`/api/v1/order/get-all-orders`, {
-    headers: { 'Authorization': bearerAuth(user) }
-  })
-}
-
-function deleteOrder(user, orderID) {
-  return instance.delete(`/api/v1/order/delete-order`, {
-    params: {
-      orderID: orderID
+      mechanicID: mechanicID
     },
     headers: { 'Authorization': bearerAuth(user) }
   })
@@ -200,6 +90,74 @@ function acceptOrder(user, orderID) {
   return instance.put(`/api/v1/order/accept-order`, null, {
     params: {
       orderID: orderID
+    },
+    headers: { 'Authorization': bearerAuth(user) }
+  })
+}
+
+function getMechanicByID(user, mechanicID) {
+  return instance.get(`/api/v1/mechanic/get-mechanic`, {
+    params: {
+      mechanicID: mechanicID
+    },
+    headers: { 'Authorization': bearerAuth(user) }
+  })
+}
+
+function updateExistingMechanic(user, mechanicWorkplace) {
+  return instance.put('/api/v1/mechanic/update-mechanic', mechanicWorkplace, {
+    headers: {
+      Authorization: bearerAuth(user),
+    },
+  });
+}
+
+
+function getMechanicsWorkplaces(user) {
+  return instance.get(`/api/v1/workplace/get-mechanic-workplaces`, {
+    headers: { 'Authorization': bearerAuth(user) }
+  })
+}
+
+function deleteMechanicWorkplace(user, mechanicWorkplaceID) {
+  return instance.delete(`/api/v1/workplace/delete-mechanic-workplace`, {
+    params: {
+      mechanicWorkplaceID: mechanicWorkplaceID
+    },
+    headers: { 'Authorization': bearerAuth(user) }
+  })
+}
+
+function createNewMechanicWorkplace(user, mechanic) {
+  return instance.post('/api/v1/workplace/create-mechanic-workplace', mechanic, {
+    headers: {
+      Authorization: bearerAuth(user),
+    },
+  });
+}
+
+function getMechanicWorkplaceByID(user, mechanicWorkplaceID) {
+  return instance.get(`/api/v1/workplace/get-mechanic-workplace`, {
+    params: {
+      mechanicWorkplaceID: mechanicWorkplaceID
+    },
+    headers: { 'Authorization': bearerAuth(user) }
+  })
+}
+
+function updateExistingMechanicWorkplace(user, mechanicWorkplace) {
+  return instance.put('/api/v1/workplace/update-mechanic-workplace', mechanicWorkplace, {
+    headers: {
+      Authorization: bearerAuth(user),
+    },
+  });
+}
+
+function updateExistingMechaniRating (user, mechanicID, mechanicRating) {
+  return instance.put('/api/v1/mechanic/rate-mechanic', {
+    params: {
+      mechanicID: mechanicID,
+      mechanicRanking: mechanicRating
     },
     headers: { 'Authorization': bearerAuth(user) }
   })
